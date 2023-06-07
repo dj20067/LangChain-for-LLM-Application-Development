@@ -1,0 +1,165 @@
+1
+00:00:00,000 --> 00:00:06,240
+In this short course,
+在这个短期课程中，
+
+2
+00:00:06,240 --> 00:00:10,160
+you saw a range of applications including processing customer reviews,
+您看到了一系列应用程序，包括处理客户评论，
+
+3
+00:00:10,160 --> 00:00:13,960
+and building an application to answer questions over documents,
+并构建一个应用程序来回答有关文档的问题，
+
+4
+00:00:13,960 --> 00:00:19,120
+and even using an LLM to decide when to make a call to the external tool,
+甚至使用LLM来决定何时调用外部工具，
+
+5
+00:00:19,120 --> 00:00:21,720
+like web search to answer complex questions.
+就像网络搜索一样回答复杂的问题。
+
+6
+00:00:21,720 --> 00:00:23,520
+If a week or two ago,
+如果一两周前，
+
+7
+00:00:23,520 --> 00:00:27,280
+someone had asked you how much work would it be to build all of these applications?
+有人问你构建所有这些应用程序需要多少工作？
+
+8
+00:00:27,280 --> 00:00:28,760
+I think a lot of people would have thought,
+我想很多人会想，
+
+9
+00:00:28,760 --> 00:00:30,400
+"Boy, this sounds like weeks,
+“男孩，这听起来像是几个星期，
+
+10
+00:00:30,400 --> 00:00:32,360
+maybe even longer of work."
+也许甚至更长的工作。
+
+11
+00:00:32,360 --> 00:00:34,320
+But you saw in this short course how with
+但是你在这个简短的课程中看到了如何
+
+12
+00:00:34,320 --> 00:00:37,040
+just a pretty reasonable number of lines of code,
+只是相当合理的代码行数，
+
+13
+00:00:37,040 --> 00:00:41,240
+you can use LLM to build all of these applications pretty efficiently.
+您可以使用LLM非常有效地构建所有这些应用程序。
+
+14
+00:00:41,240 --> 00:00:42,960
+As I hope you take these ideas,
+正如我希望你接受这些想法，
+
+15
+00:00:42,960 --> 00:00:45,600
+maybe you can take some code snippets that you saw in
+也许你可以拿一些你在
+
+16
+00:00:45,600 --> 00:00:48,680
+the Jupyter Notebooks and use them in your own applications.
+Jupyter 笔记本，并在您自己的应用程序中使用它们。
+
+17
+00:00:48,680 --> 00:00:51,080
+These ideas are really just the start.
+这些想法实际上只是一个开始。
+
+18
+00:00:51,080 --> 00:00:54,620
+There's a lot of other applications that you can use language models for.
+还有许多其他应用程序可以使用语言模型。
+
+19
+00:00:54,620 --> 00:00:57,400
+These models are so powerful because they're applicable to
+这些模型非常强大，因为它们适用于
+
+20
+00:00:57,400 --> 00:01:02,480
+such a wide range of tasks whether it be answering questions about CSVs,
+如此广泛的任务，无论是回答有关CSV的问题，
+
+21
+00:01:02,480 --> 00:01:06,080
+querying SQL databases, interacting with APIs.
+查询 SQL 数据库，与 API 交互。
+
+22
+00:01:06,080 --> 00:01:10,680
+There's a lot of different examples of using chains and the combinations of
+有很多使用链和组合的不同示例
+
+23
+00:01:10,680 --> 00:01:15,920
+prompts and output parsers and then more chains to do all these things in LinkedChain.
+提示并输出解析器，然后是更多的链来在链接链中执行所有这些操作。
+
+24
+00:01:15,920 --> 00:01:18,080
+Most of that is due to the LinkedIn community.
+其中大部分是由于LinkedIn社区。
+
+25
+00:01:18,080 --> 00:01:20,000
+So I want to also give a really big thank out to
+因此，我也想非常感谢
+
+26
+00:01:20,000 --> 00:01:22,240
+everyone in the community who's contributed,
+社区中做出贡献的每个人，
+
+27
+00:01:22,240 --> 00:01:24,600
+whether it be improvements in the documentation,
+无论是文档的改进，
+
+28
+00:01:24,600 --> 00:01:27,680
+making it easier for others to get started or new types of chains,
+使其他人更容易上手或新型链，
+
+29
+00:01:27,680 --> 00:01:30,240
+opening up a whole new world of possibilities.
+打开一个充满可能性的全新世界。
+
+30
+00:01:30,240 --> 00:01:33,600
+>> With that, if you have not yet already done so,
+>> 有了这个，如果你还没有这样做，
+
+31
+00:01:33,600 --> 00:01:35,440
+I hope you go to your laptop,
+我希望你去你的笔记本电脑，
+
+32
+00:01:35,440 --> 00:01:39,040
+your desktop and run pip install LinkedChain and then go
+你的桌面并运行pip安装链接链，然后去
+
+33
+00:01:39,040 --> 00:01:43,360
+use this tool to go build some amazing applications.
+使用此工具构建一些令人惊叹的应用程序。
+

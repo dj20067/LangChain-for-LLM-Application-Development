@@ -1,0 +1,980 @@
+1
+00:00:00,000 --> 00:00:04,000
+What is LLM Application Development?
+什么是LLM应用开发？
+
+2
+00:00:04,000 --> 00:00:08,000
+In lesson one, we'll be covering models, prompts, and parsers.
+在第一课中，我们将讨论模型、提示和解析器。
+
+3
+00:00:08,000 --> 00:00:13,000
+So models refers to the language models underpinning a lot of it.
+因此，模型指的是支撑其中很多内容的语言模型。
+
+4
+00:00:13,000 --> 00:00:18,000
+Prompts refers to the style of creating inputs to pass into the models.
+提示是指创建输入的风格，以传入模型。
+
+5
+00:00:18,000 --> 00:00:20,000
+And then parsers is on the opposite end.
+然后解析器是在另一端。
+
+6
+00:00:20,000 --> 00:00:25,000
+It involves taking the output of these models and parsing it into a more structured format
+它涉及到将这些模型的输出，解析成一个更有结构的格式
+
+7
+00:00:25,000 --> 00:00:27,000
+so that you can do things downstream with it.
+这样你就可以用它做下游的事情。
+
+8
+00:00:27,000 --> 00:00:32,000
+So when you build an application using LLM, there'll often be reusable models.
+因此，当你使用LLM构建一个应用程序时，往往会有可重复使用的模型。
+
+9
+00:00:32,000 --> 00:00:35,000
+We have repeatedly prompted models, parsers outputs,
+我们反复提示模型、解析器的输出、
+
+10
+00:00:35,000 --> 00:00:40,000
+and so LLM gives an easy set of abstractions to do this type of operation.
+因此，LLM提供了一套简单的抽象来进行这种类型的操作。
+
+11
+00:00:40,000 --> 00:00:45,000
+So with that, let's jump in and take a look at models, prompts, and parsers.
+因此，让我们跳进去，看看模型、提示和解析器。
+
+12
+00:00:45,000 --> 00:00:47,000
+So to get started, here's a little bit of starter code.
+因此，为了开始工作，这里有一点启动代码。
+
+13
+00:00:47,000 --> 00:00:53,000
+I'm going to import OS, import OpenAI, and load my OpenAI secret key.
+我将导入操作系统，导入OpenAI，并加载我的OpenAI密匙。
+
+14
+00:00:53,000 --> 00:00:58,000
+The OpenAI library is already installed in my Jupyter Notebook environment.
+OpenAI库已经安装在我的Jupyter笔记本环境中。
+
+15
+00:00:58,000 --> 00:01:02,000
+If you're running this locally and you don't have OpenAI installed yet,
+如果你在本地运行，并且还没有安装OpenAI、
+
+16
+00:01:02,000 --> 00:01:04,000
+you might need to run that.
+你可能需要运行这个。
+
+17
+00:01:04,000 --> 00:01:07,000
+BangPip installed OpenAI, but I'm not going to do that here.
+BangPip安装了OpenAI，但我不打算在这里这么做。
+
+18
+00:01:07,000 --> 00:01:09,000
+And then here's a helper function.
+然后这里有一个辅助函数。
+
+19
+00:01:09,000 --> 00:01:14,000
+This is actually very similar to the helper function that you might have seen
+这实际上与你可能已经看到的辅助函数非常相似
+
+20
+00:01:14,000 --> 00:01:17,000
+in the ChaiGPT prompt engineering for developers course
+在ChaiGPT提示工程的开发者课程中
+
+21
+00:01:17,000 --> 00:01:20,000
+that I offered together with OpenAI's Isa Fulford.
+我和OpenAI的Isa Fulford一起提供的。
+
+22
+00:01:20,000 --> 00:01:26,000
+And so with this helper function, you can say get completion on what is 1 plus 1,
+因此，通过这个辅助函数，你可以说在什么是1加1上得到完成、
+
+23
+00:01:26,000 --> 00:01:32,000
+and this will call ChaiGPT or technically the model GPT 3.5 Turbo
+这将调用ChaiGPT或技术上的模型GPT 3.5 Turbo
+
+24
+00:01:32,000 --> 00:01:35,000
+to give you an answer back like this.
+来给你一个这样的答复。
+
+25
+00:01:35,000 --> 00:01:42,000
+Now, to motivate the line chain abstractions for model prompts and parsers,
+现在，为了激励模型提示和解析器的行链抽象、
+
+26
+00:01:42,000 --> 00:01:48,000
+let's say you get an email from a customer in a language other than English.
+比方说，你收到一封来自客户的非英语语言的电子邮件。
+
+27
+00:01:48,000 --> 00:01:51,000
+In order to make sure this is accessible,
+为了确保这一点是可以做到的、
+
+28
+00:01:51,000 --> 00:01:55,000
+the other language I'm going to use is the English pirate language.
+我将使用的另一种语言是英国的海盗语言。
+
+29
+00:01:55,000 --> 00:01:59,000
+What the consists are, "I be fuming that me blender lid flew off
+什么是 "我很生气，我的搅拌器盖子飞走了
+
+30
+00:01:59,000 --> 00:02:02,000
+and splattered my kitchen walls with smoothie.
+并在我的厨房墙壁上溅上了冰沙。
+
+31
+00:02:02,000 --> 00:02:06,000
+And to make matters worse, the warranty don't cover the cost of cleaning up me kitchen.
+而更糟糕的是，保修期不包括清理我的厨房的费用。
+
+32
+00:02:06,000 --> 00:02:08,000
+I need your help right now, matey."
+我现在需要你的帮助，伙计。"
+
+33
+00:02:08,000 --> 00:02:14,000
+And so what we will do is ask this LLM to translate the text
+因此，我们要做的是请这位法学硕士来翻译文本。
+
+34
+00:02:14,000 --> 00:02:18,000
+to American English in a calm and respectful tone.
+以平静和尊重的语气说美式英语。
+
+35
+00:02:18,000 --> 00:02:23,000
+So I'm going to set style to American English in a calm and respectful tone.
+因此，我将风格设定为美式英语，语气平和，态度恭敬。
+
+36
+00:02:23,000 --> 00:02:26,000
+And so in order to actually accomplish this,
+因此，为了真正实现这一目标、
+
+37
+00:02:26,000 --> 00:02:29,000
+if you've seen a little bit of prompting before,
+如果你以前见过一点提示、
+
+38
+00:02:29,000 --> 00:02:33,000
+I'm going to specify the prompt using an F string with instructions,
+我打算用一个带有说明的F字符串来指定提示、
+
+39
+00:02:33,000 --> 00:02:38,000
+translate the text that is delimited by triple backticks into style that is style,
+将由三个反斜线划定的文本翻译成样式，即style、
+
+40
+00:02:38,000 --> 00:02:40,000
+and then plug in these two styles.
+然后插入这两种风格。
+
+41
+00:02:40,000 --> 00:02:46,000
+And so this generates a prompt that says translate the text and so on.
+于是这就产生了一个提示，说是翻译文本等等。
+
+42
+00:02:46,000 --> 00:02:49,000
+I encourage you to pause the video and run the code,
+我鼓励你暂停该视频并运行该代码、
+
+43
+00:02:49,000 --> 00:02:54,000
+and also try modifying the prompt to see if you can get a different output.
+并尝试修改提示，看看是否能得到不同的输出。
+
+44
+00:02:54,000 --> 00:03:03,000
+You can then prompt the large language model to get a response.
+然后你可以提示大型语言模型，以获得响应。
+
+45
+00:03:03,000 --> 00:03:04,000
+Let's see what the response is.
+让我们看看回应是什么。
+
+46
+00:03:04,000 --> 00:03:08,000
+It says, "Translated the English pirate's message into this very polite,
+它说："把英国海盗的信息翻译成这个非常有礼貌的、
+
+47
+00:03:08,000 --> 00:03:12,000
+I'm really frustrated that my blender lid flew off and made a mess of my kitchen walls with smoothie,"
+我真的很沮丧，我的搅拌机盖子飞了出去，把我的厨房墙壁弄得乱七八糟，满是冰沙"。
+
+48
+00:03:12,000 --> 00:03:14,000
+and so on.
+等等。
+
+49
+00:03:14,000 --> 00:03:16,000
+"I could really use your help right now, my friend."
+"我现在真的可以使用你的帮助，我的朋友。"
+
+50
+00:03:16,000 --> 00:03:18,000
+That sounds very nice.
+这听起来非常好。
+
+51
+00:03:18,000 --> 00:03:23,000
+So if you have different customers writing reviews in different languages,
+因此，如果你有不同的客户用不同的语言写评论、
+
+52
+00:03:23,000 --> 00:03:27,000
+not just English pirate, but French, German, Japanese, and so on,
+不仅仅是英语盗版，还有法语、德语、日语等等、
+
+53
+00:03:27,000 --> 00:03:34,000
+you can imagine having to generate a whole sequence of prompts to generate such translations.
+你可以想象，要生成这样的翻译，必须要有一整串的提示语。
+
+54
+00:03:34,000 --> 00:03:40,000
+Let's look at how we can do this in a more convenient way using LangChain.
+让我们看看如何使用LangChain以更方便的方式来做这件事。
+
+55
+00:03:40,000 --> 00:03:44,000
+I'm going to import chat open AI.
+我准备导入聊天开AI。
+
+56
+00:03:44,000 --> 00:03:49,000
+This is LangChain's abstraction for the chat GPT API endpoint.
+这是LangChain对聊天GPT API端点的抽象化。
+
+57
+00:03:49,000 --> 00:03:54,000
+And so if I then set chat equals chat open AI and look at what chat is,
+因此，如果我再把聊天设置为聊天，打开AI，看看聊天是什么、
+
+58
+00:03:54,000 --> 00:04:00,000
+it creates this object as follows that uses the chat GPT model,
+它创建这个对象的方式如下，使用聊天GPT模型、
+
+59
+00:04:00,000 --> 00:04:03,000
+which is also called GPT 3.5 turbo.
+这也被称为GPT 3.5 turbo。
+
+60
+00:04:03,000 --> 00:04:10,000
+When I'm building applications, one thing I will often do is set the temperature parameter to be equal to zero.
+当我构建应用程序时，我经常会做的一件事是将温度参数设置为等于零。
+
+61
+00:04:10,000 --> 00:04:20,000
+So the default temperature is 0.7, but let me actually redo that with temperature equals 0.0.
+因此，默认的温度是0.7，但让我实际重做一下，温度等于0.0。
+
+62
+00:04:20,000 --> 00:04:28,000
+And now the temperature is set to zero to make this output a little bit less random.
+而现在，温度被设置为零，以使这个输出的随机性降低一点。
+
+63
+00:04:28,000 --> 00:04:31,000
+And now let me define the template string as follows.
+现在让我定义模板字符串如下。
+
+64
+00:04:31,000 --> 00:04:35,000
+Translate the text delimited by triple vectors into style that is style.
+将三向量划定的文本翻译成风格，即style。
+
+65
+00:04:35,000 --> 00:04:37,000
+And then here's the text.
+然后这里是文字。
+
+66
+00:04:37,000 --> 00:04:47,000
+And to repeatedly reuse this template, let's import LangChain's chat prompt template.
+而为了重复使用这个模板，我们来导入LangChain的聊天提示模板。
+
+67
+00:04:47,000 --> 00:05:00,000
+And then let me create a prompt template using that template string that we just wrote above.
+然后让我用我们刚才在上面写的模板字符串创建一个提示模板。
+
+68
+00:05:00,000 --> 00:05:04,000
+From the prompt template, you can actually extract the original prompt,
+从提示模板中，你实际上可以提取原始提示、
+
+69
+00:05:04,000 --> 00:05:10,000
+and it realizes that this prompt has two input variables, the style and the text,
+它意识到这个提示有两个输入变量，即样式和文本、
+
+70
+00:05:10,000 --> 00:05:16,000
+which were shown here with the curly braces.
+这里显示的是大括号。
+
+71
+00:05:16,000 --> 00:05:20,000
+And here is the original template as well that we had specified.
+这里也是我们指定的原始模板。
+
+72
+00:05:20,000 --> 00:05:28,000
+In fact, if I print this out, it realizes it has two input variables, style and text.
+事实上，如果我把这个打印出来，它就会意识到它有两个输入变量，样式和文本。
+
+73
+00:05:28,000 --> 00:05:30,000
+Now let's specify the style.
+现在让我们来指定风格。
+
+74
+00:05:30,000 --> 00:05:34,000
+This is the style that I want the customer message to be translated to,
+这是我希望客户信息被翻译成的样式、
+
+75
+00:05:34,000 --> 00:05:37,000
+so I'm going to call this customer style.
+所以我打算把这称为客户风格。
+
+76
+00:05:37,000 --> 00:05:45,000
+And here's my same customer email as before.
+这是我和以前一样的客户电子邮件。
+
+77
+00:05:45,000 --> 00:05:56,000
+And now if I create customer messages, this will generate the prompt
+而现在，如果我创建客户信息，这将产生提示
+
+78
+00:05:56,000 --> 00:05:59,000
+and will pass this to a large language model in a minute to get a response.
+并在一分钟内将其传递给一个大型的语言模型，以获得响应。
+
+79
+00:05:59,000 --> 00:06:05,000
+So if you want to look at the types, the customer message is actually a list.
+因此，如果你想看一下类型，客户信息实际上是一个列表。
+
+80
+00:06:05,000 --> 00:06:11,000
+And if you look at the first element of the list,
+而如果你看一下列表的第一个元素、
+
+81
+00:06:11,000 --> 00:06:17,000
+this is more or less that prompt that you would expect this to be creating.
+这或多或少是你所期望的那个提示，这就是创建。
+
+82
+00:06:17,000 --> 00:06:20,000
+Lastly, let's pass this prompt to the LLM.
+最后，让我们把这个提示传递给法律硕士。
+
+83
+00:06:20,000 --> 00:06:29,000
+So I'm going to call chat, which we had set earlier as a reference to the OpenAI chat GPT endpoint.
+因此，我将调用聊天，我们之前已经将其设置为对OpenAI聊天GPT端点的引用。
+
+84
+00:06:29,000 --> 00:06:36,000
+And if we print out the customer responses content,
+而如果我们把客户的回复内容打印出来、
+
+85
+00:06:36,000 --> 00:06:45,000
+then it gives you back this text translated from English pirate to polite American English.
+然后它给你回馈这个从英语海盗翻译成礼貌的美国英语的文本。
+
+86
+00:06:45,000 --> 00:06:50,000
+And of course, you can imagine other use cases where the customer emails are in other languages,
+当然，你也可以想象其他的用例，客户的电子邮件是用其他语言写的、
+
+87
+00:06:50,000 --> 00:06:58,000
+and this too can be used to translate the messages for an English speaking to understand and reply to.
+而这也可以用来翻译信息，让讲英语的人理解和回复。
+
+88
+00:06:58,000 --> 00:07:01,000
+I encourage you to pause the video and run the code,
+我鼓励你暂停该视频并运行该代码、
+
+89
+00:07:01,000 --> 00:07:06,000
+and also try modifying the prompt to see if you can get a different output.
+并尝试修改提示，看看是否能得到不同的输出。
+
+90
+00:07:06,000 --> 00:07:12,000
+Now let's hope our customer service agent replied to the customer in their original language.
+现在，让我们希望我们的客服人员用客户的原文回复客户。
+
+91
+00:07:12,000 --> 00:07:16,000
+So let's say English speaking customer service agent writes this.
+所以我们说，讲英语的客服人员写了这个。
+
+92
+00:07:16,000 --> 00:07:20,000
+He says, "Hey there customer, warranty does not cover, clean expenses for your kitchen because it's your fault.
+他说，"嘿，客户，保修不包括，为你的厨房清洁费用，因为这是你的错。
+
+93
+00:07:20,000 --> 00:07:25,000
+You misused your blender by forgetting to put on the lid. Tough luck. See ya."
+你因为忘记盖上盖子而误用了你的搅拌器。运气不好。再见。"
+
+94
+00:07:25,000 --> 00:07:32,000
+Not a very polite message, but let's say this is what a customer service agent wants.
+这不是一个非常有礼貌的信息，但我们说这是一个客户服务人员想要的。
+
+95
+00:07:32,000 --> 00:07:39,000
+We are going to specify that the service message is going to be translated to this pirate style.
+我们将指定服务信息将被翻译成这种海盗风格。
+
+96
+00:07:39,000 --> 00:07:45,000
+So we want it to be in a polite tone that speaks in English pirate.
+因此，我们希望它以礼貌的语气，用英语盗版说话。
+
+97
+00:07:45,000 --> 00:07:51,000
+And because we previously created that prompt template, the cool thing is we can now reuse that prompt template
+因为我们之前创建了提示模板，很酷的事情是我们现在可以重复使用该提示模板
+
+98
+00:07:51,000 --> 00:07:58,000
+and specify that the output style we want is this, service style pirate, and the text is this, service reply.
+并指定我们想要的输出风格是这样的，服务风格海盗，而文本是这样的，服务回复。
+
+99
+00:07:58,000 --> 00:08:13,000
+And if we do that, that's the prompt. And if we prompt chat GPT, this is the response it gives us back.
+如果我们这么做，这就是提示。如果我们提示聊天GPT，这是它给我们的回应。
+
+100
+00:08:13,000 --> 00:08:20,000
+"Ahoy there matey, I must kindly inform you that the warranty be not covering the expenses or cleaning your galley."
+"你好，伙计，我必须善意地通知你，担保不包括费用或清洁你的厨房。"
+
+101
+00:08:20,000 --> 00:08:23,000
+And so on. "Aye, tough luck. Farewell me hearty."
+等等。"是啊，运气不好。再见了，我的心肝。"
+
+102
+00:08:23,000 --> 00:08:29,000
+So you might be wondering, why are we using prompt templates instead of just an f-string?
+所以你可能会想，为什么我们要使用提示模板，而不是直接使用f-string？
+
+103
+00:08:29,000 --> 00:08:35,000
+The answer is that as you build sophisticated applications, prompts can be quite long and detailed.
+答案是，当你建立复杂的应用程序时，提示可能相当长和详细。
+
+104
+00:08:35,000 --> 00:08:42,000
+And so prompt templates are a useful abstraction to help you reuse good prompts when you can.
+因此，提示模板是一个有用的抽象概念，可以帮助你在可能的情况下重复使用好的提示语。
+
+105
+00:08:42,000 --> 00:08:52,000
+This is an example of a relatively long prompt to grade a student's submission for an online learning application.
+这是一个相对较长的提示例子，对学生提交的在线学习申请进行评分。
+
+106
+00:08:52,000 --> 00:08:58,000
+And a prompt like this can be quite long, in which you can ask the LM to first solve the problem,
+而这样的提示可以相当长，其中可以要求LM先解决问题、
+
+107
+00:08:58,000 --> 00:09:02,000
+and then have the output in a certain format, and the output in a certain format.
+然后有一定格式的输出，和一定格式的输出。
+
+108
+00:09:02,000 --> 00:09:09,000
+And wrapping this in a Lanchain prompt makes it easier to reuse a prompt like this.
+而将其包裹在Lanchain提示中，使其更容易重复使用这样的提示。
+
+109
+00:09:09,000 --> 00:09:14,000
+Also, you see later that Lanchain provides prompts for some common operations,
+另外，你以后会看到Lanchain为一些常见的操作提供提示、
+
+110
+00:09:14,000 --> 00:09:22,000
+such as summarization, or question answering, or connecting to SQL databases, or connecting to different APIs.
+如总结，或回答问题，或连接到SQL数据库，或连接到不同的API。
+
+111
+00:09:22,000 --> 00:09:32,000
+And so by using some of Lanchain's built-in prompts, you can quickly get an application working without needing to engineer your own prompts.
+因此，通过使用Lanchain的一些内置提示，你可以快速让一个应用程序工作，而不需要设计你自己的提示。
+
+112
+00:09:32,000 --> 00:09:43,000
+One other aspect of Lanchain's prompt libraries is that it also supports output parsing, which we'll get to in a minute.
+Lanchain的提示库的另一个方面是它也支持输出解析，我们将在一分钟内讨论这个问题。
+
+113
+00:09:43,000 --> 00:09:52,000
+But when you're building a complex application using an LLM, you often instruct the LLM to generate its output in a certain format,
+但是，当你使用LLM构建一个复杂的应用程序时，你经常指示LLM以某种格式生成其输出、
+
+114
+00:09:52,000 --> 00:09:55,000
+such as using specific keywords.
+如使用特定的关键词。
+
+115
+00:09:55,000 --> 00:10:02,000
+This example on the left illustrates using an LLM to carry out something called chain of thought reasoning,
+左边这个例子说明了使用LLM来进行一种叫做思维链推理的东西、
+
+116
+00:10:02,000 --> 00:10:06,000
+using a framework called the React framework.
+使用一个叫做React的框架。
+
+117
+00:10:06,000 --> 00:10:15,000
+But don't worry about the technical details, but the keys of that is that the thought is what the LLM is thinking,
+但不要担心技术细节，但其中的关键是，思想是法律硕士所想的、
+
+118
+00:10:15,000 --> 00:10:21,000
+because by giving an LLM space to think, it can often get to more accurate conclusions.
+因为通过给法律硕士思考的空间，它往往可以得到更准确的结论。
+
+119
+00:10:21,000 --> 00:10:31,000
+Then action as a keyword to carry the specific action, and then observation to show what it learned from that action, and so on.
+然后以行动为关键词来承载具体的行动，再以观察来显示它从该行动中所学到的东西，如此反复。
+
+120
+00:10:31,000 --> 00:10:40,000
+And if you have a prompt that instructs the LLM to use these specific keywords, thought, action, and observation,
+而如果你有一个提示，指示LLM使用这些特定的关键词，思想、行动和观察、
+
+121
+00:10:40,000 --> 00:10:48,000
+then this prompt can be coupled with a parser to extract out the text that has been tagged with these specific keywords.
+那么这个提示就可以和分析器结合起来，提取出被标记为这些特定关键词的文本。
+
+122
+00:10:48,000 --> 00:10:55,000
+And so that together gives a very nice abstraction to specify the input to an LLM,
+因此，这就为指定LLM的输入提供了一个非常好的抽象概念、
+
+123
+00:10:55,000 --> 00:11:01,000
+and then also have a parser correctly interpret the output that the LLM gives.
+然后让一个分析器正确解释LLM给出的输出。
+
+124
+00:11:01,000 --> 00:11:09,000
+And so with that, let's return to see an example of an output parser using LangChain.
+就这样，让我们再来看看一个使用LangChain的输出分析器的例子。
+
+125
+00:11:09,000 --> 00:11:17,000
+In this example, let's take a look at how you can have an LLM output JSON and use LangChain to parse that output.
+在这个例子中，我们来看看如何让LLM输出JSON，并使用LangChain来解析该输出。
+
+126
+00:11:17,000 --> 00:11:29,000
+And the running example that I'll use will be to extract information from a product review and format that output in a JSON format.
+我将使用的运行例子是从产品评论中提取信息，并以JSON格式进行输出。
+
+127
+00:11:29,000 --> 00:11:34,000
+So here's an example of how you would like the output to be formatted.
+因此，这里有一个例子，说明你希望输出的格式是怎样的。
+
+128
+00:11:34,000 --> 00:11:39,000
+Technically, this is a Python dictionary where whether or not the product is a gift,
+从技术上讲，这是一个Python词典，其中产品是否是礼物、
+
+129
+00:11:39,000 --> 00:11:45,000
+master/false, the number of days it took to deliver it was five, and the price value was pretty affordable.
+主人/假，交付的天数是五天，价格值相当实惠。
+
+130
+00:11:45,000 --> 00:11:48,000
+So this is one example of a desired output.
+所以这是一个期望输出的例子。
+
+131
+00:11:48,000 --> 00:11:57,000
+Here is an example of customer review as well as a template to try to get to that JSON output.
+这里有一个客户评论的例子，以及一个试图获得该JSON输出的模板。
+
+132
+00:11:57,000 --> 00:12:00,000
+So here's a customer review. It says, "This Leap Blower is pretty amazing.
+所以这里有一个客户评论。它说："这个Leap Blower相当惊人。
+
+133
+00:12:00,000 --> 00:12:05,000
+It has four settings, candle blower, gender breeze, windy city, and tornado.
+它有四个设置，吹蜡烛、性别风、风城和龙卷风。
+
+134
+00:12:05,000 --> 00:12:08,000
+It arrived in two days, just in time for my wife's anniversary present.
+它在两天内到达，正好是我妻子的周年纪念礼物。
+
+135
+00:12:08,000 --> 00:12:14,000
+I think my wife liked it so much she was speechless. So far, I've been the only one using it," and so on.
+我想我妻子非常喜欢它，她无话可说。到目前为止，我是唯一使用它的人，"等等。
+
+136
+00:12:14,000 --> 00:12:18,000
+And here's a review template. For the following text, extract the following information.
+而这里有一个审查模板。对于下面的文本，提取以下信息。
+
+137
+00:12:18,000 --> 00:12:23,000
+Specify, was this a gift? So in this case, it would be yes because this is a gift.
+具体说明，这是一个礼物吗？所以在这种情况下，应该是肯定的，因为这是一个礼物。
+
+138
+00:12:23,000 --> 00:12:27,000
+And also, delivery days. How long did it take to deliver?
+还有，交付日。交付的时间有多长？
+
+139
+00:12:27,000 --> 00:12:30,000
+It looks like in this case, it arrived in two days.
+看起来在这种情况下，它在两天内到达。
+
+140
+00:12:30,000 --> 00:12:36,000
+And what's the price value? You know, slightly more expensive than the Leap Blowers, and so on.
+那么价格价值是多少呢？你知道，比跃进式吹风机稍贵，等等。
+
+141
+00:12:36,000 --> 00:12:46,000
+So the review template asks the LLM to take as input a customer review and extract these three fields
+因此，审查模板要求LLM将客户审查作为输入，并提取这三个字段
+
+142
+00:12:46,000 --> 00:12:55,000
+and then format the output as JSON with the following keys.
+然后将输出格式化为JSON，键值如下。
+
+143
+00:12:55,000 --> 00:13:01,000
+All right. So here's how you can wrap this in LangChain.
+好的。因此，这里是你如何用LangChain来包装这个。
+
+144
+00:13:01,000 --> 00:13:05,000
+Let's import the chat prompt template. We'd actually imported this already earlier.
+让我们导入聊天提示模板。实际上，我们早些时候已经导入了这个。
+
+145
+00:13:05,000 --> 00:13:10,000
+Technically, this line is redundant, but I'll just import it again and then have the prompt template
+从技术上讲，这一行是多余的，但我将再次导入，然后有提示模板
+
+146
+00:13:10,000 --> 00:13:16,000
+created from the review template up on top.
+从上面的审查模板创建。
+
+147
+00:13:16,000 --> 00:13:20,000
+And so here's the prompt template.
+因此，这里是提示模板。
+
+148
+00:13:20,000 --> 00:13:32,000
+And now, similar to our early usage of a prompt template, let's create the messages to pass to the OpenAI endpoint.
+现在，与我们早期使用的提示模板类似，让我们创建信息来传递给OpenAI端点。
+
+149
+00:13:32,000 --> 00:13:39,000
+Create the OpenAI endpoint, call that endpoint, and then let's print out the response.
+创建OpenAI端点，调用该端点，然后让我们打印出响应。
+
+150
+00:13:39,000 --> 00:13:45,000
+I encourage you to pause the video and run the code.
+我鼓励你暂停该视频并运行该代码。
+
+151
+00:13:45,000 --> 00:13:53,000
+And there it is. It says gift is true, delivery days is two, and the price value also looks pretty accurate.
+它就在那里。它说礼物是真的，交货期是两天，价格值也看起来相当准确。
+
+152
+00:13:53,000 --> 00:14:04,000
+But note that if we check the type of the response, this is actually a string.
+但是请注意，如果我们检查响应的类型，这实际上是一个字符串。
+
+153
+00:14:04,000 --> 00:14:09,000
+So it looks like JSON and looks like it has key value pairs, but it's actually not a dictionary.
+所以它看起来像JSON，看起来像有键值对，但实际上它不是一个字典。
+
+154
+00:14:09,000 --> 00:14:12,000
+This is just one long string.
+这只是一个长字符串。
+
+155
+00:14:12,000 --> 00:14:17,000
+So what I'd really like to do is go to the response content and get the value from the gift key, which should be true.
+因此，我真正想做的是进入响应内容，从礼物键中获取值，这应该是真的。
+
+156
+00:14:17,000 --> 00:14:22,000
+But I run this, this should generate an error because, well, this is actually a string.
+但我运行这个，这应该产生一个错误，因为，这实际上是一个字符串。
+
+157
+00:14:22,000 --> 00:14:24,000
+This is not a Python dictionary.
+这不是一个 Python 字典。
+
+158
+00:14:24,000 --> 00:14:31,000
+So let's see how we would use LangChain's parser in order to do this.
+因此，让我们看看如何使用LangChain的分析器来实现这一目标。
+
+159
+00:14:31,000 --> 00:14:39,000
+I'm going to import response schema and structured output parser from LangChain.
+我准备从LangChain导入响应模式和结构化输出解析器。
+
+160
+00:14:39,000 --> 00:14:46,000
+And I'm going to tell it what I want it to parse by specifying these response schemas.
+我将通过指定这些响应模式来告诉它我想让它解析什么。
+
+161
+00:14:46,000 --> 00:14:49,000
+So the gift schema is named gift.
+因此，礼物模式被命名为礼物。
+
+162
+00:14:49,000 --> 00:14:53,000
+And here's the description. Was the item purchased as a gift for someone else?
+还有，这里有描述。该物品是作为礼物买给别人的吗？
+
+163
+00:14:53,000 --> 00:14:56,000
+Answer true or yes, false if not or unknown, and so on.
+回答 "是 "或 "是"，如果不是或不知道，则回答 "是"，以此类推。
+
+164
+00:14:56,000 --> 00:15:00,000
+So have a gift schema, delivery day schema, price value schema.
+因此，有一个礼物模式，交付日模式，价格价值模式。
+
+165
+00:15:00,000 --> 00:15:05,000
+And then let's put all three of them into a list as follows.
+然后让我们把这三个人都放到一个列表中，如下所示。
+
+166
+00:15:05,000 --> 00:15:15,000
+Now that I've specified the schema for these, LangChain can actually give you the prompt itself by having the output parser
+现在我已经为这些指定了模式，LangChain实际上可以通过输出分析器给你提示本身
+
+167
+00:15:15,000 --> 00:15:20,000
+tell you what instructions it wants you to send to the LLM.
+告诉你它希望你向LLM发送什么指示。
+
+168
+00:15:20,000 --> 00:15:25,000
+So if I were to print format instructions,
+因此，如果我是打印格式说明、
+
+169
+00:15:25,000 --> 00:15:34,000
+she has a pretty precise set of instructions for the LLM that will cause it to generate an output that the output parser can process.
+她为LLM制定了一套相当精确的指令，将使它产生一个输出解析器可以处理的输出。
+
+170
+00:15:34,000 --> 00:15:37,000
+So here's the new review template.
+因此，这里是新的审查模板。
+
+171
+00:15:37,000 --> 00:15:46,000
+And the review template includes the format instructions that LangChain generated.
+而审查模板包括LangChain生成的格式说明。
+
+172
+00:15:46,000 --> 00:15:58,000
+And so we can create a prompt from the review template too, and then create the messages that will pass to the OpenAI endpoint.
+因此，我们也可以从审查模板中创建一个提示，然后创建将传递给OpenAI端点的信息。
+
+173
+00:15:58,000 --> 00:16:03,000
+If you want, you can take a look at the actual prompt,
+如果你愿意，你可以看一下实际的提示、
+
+174
+00:16:03,000 --> 00:16:10,000
+which gives you instructions to extract the fields, gift, delivery days, price value.
+这给你提供了提取字段的指示，礼物、交付日、价格值。
+
+175
+00:16:10,000 --> 00:16:18,000
+Here's the text. And then here are the formatting instructions.
+这里是文本。然后这里是格式化说明。
+
+176
+00:16:18,000 --> 00:16:30,000
+Finally, if we call the OpenAI endpoint, let's take a look at what response we got.
+最后，如果我们调用OpenAI的端点，让我们看看我们得到了什么回应。
+
+177
+00:16:30,000 --> 00:16:34,000
+It is now this.
+现在是这样。
+
+178
+00:16:34,000 --> 00:16:42,000
+And now if we use the output parser that we created earlier,
+而现在，如果我们使用我们先前创建的输出分析器、
+
+179
+00:16:42,000 --> 00:16:47,000
+you can then parse this into an output dictionary.
+然后你可以将其解析为一个输出字典。
+
+180
+00:16:47,000 --> 00:16:49,000
+We should have our print look like this.
+我们应该让我们的印刷品看起来像这样。
+
+181
+00:16:49,000 --> 00:16:57,000
+And notice that this is of type dictionary, not a string,
+并注意到这是一个字典类型，而不是一个字符串、
+
+182
+00:16:57,000 --> 00:17:04,000
+which is why I can now extract the value associated with the key gift and get true,
+这就是为什么我现在可以提取与键gift相关的值并得到true、
+
+183
+00:17:04,000 --> 00:17:08,000
+or the value associated with delivery days and get two,
+或与交货天数有关的数值，并得到两个、
+
+184
+00:17:08,000 --> 00:17:14,000
+or you can also extract the value associated with price value.
+或者你也可以提取与价格值相关的值。
+
+185
+00:17:14,000 --> 00:17:25,000
+So this is a nifty way to take your LLM output and parse it into a Python dictionary to make the output easier to use in downstream processing.
+所以这是一个很好的方法，可以把你的LLM输出解析成Python字典，使输出更容易在下游处理中使用。
+
+186
+00:17:25,000 --> 00:17:29,000
+I encourage you to pause the video and run the code.
+我鼓励你暂停该视频并运行该代码。
+
+187
+00:17:29,000 --> 00:17:32,000
+And so that's it for models, prompts, and parses.
+就这样，模型、提示和解析就这样了。
+
+188
+00:17:32,000 --> 00:17:37,000
+With these tools, hopefully you'll be able to reuse your own prompt templates easily,
+有了这些工具，希望你能轻松地重复使用你自己的提示模板、
+
+189
+00:17:37,000 --> 00:17:40,000
+share prompt templates with others that you're collaborating with,
+与你合作的其他人分享提示模板、
+
+190
+00:17:40,000 --> 00:17:43,000
+even use LangChain's built-in prompt templates,
+甚至使用LangChain的内置提示模板、
+
+191
+00:17:43,000 --> 00:17:48,000
+which as you just saw can often be coupled with an output parser,
+正如你刚才看到的，它通常可以与一个输出分析器结合起来、
+
+192
+00:17:48,000 --> 00:17:52,000
+so that the input prompt to output in a specific format,
+以便将输入提示以特定的格式输出、
+
+193
+00:17:52,000 --> 00:18:02,000
+and then the parser pauses that output to store the data in a Python dictionary or some other data structure that makes it easy for downstream processing.
+然后解析器暂停该输出，将数据存储在Python字典或其他一些数据结构中，以便于下游的处理。
+
+194
+00:18:02,000 --> 00:18:06,000
+I hope you find this useful in many of your applications.
+我希望你发现这在你的许多应用中是有用的。
+
+195
+00:18:06,000 --> 00:18:14,000
+And with that, let's go into the next video where we'll see how LangChain can help you build better chatbots,
+就这样，让我们进入下一个视频，我们将看到LangChain如何帮助你建立更好的聊天机器人、
+
+196
+00:18:14,000 --> 00:18:22,000
+or have an LLM have more effective chats by better managing what it remembers from the conversation you've had so far.
+或者让LLM通过更好地管理它从你到目前为止的对话中所记住的内容来进行更有效的聊天。
+

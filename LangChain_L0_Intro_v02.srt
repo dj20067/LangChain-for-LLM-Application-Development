@@ -1,0 +1,240 @@
+1
+00:00:00,000 --> 00:00:10,480
+Welcome to this short course on LLM for Large Language Model Application Development.
+欢迎参加这个关于大型语言模型应用开发的LLM短期课程。
+
+2
+00:00:10,480 --> 00:00:16,260
+By prompting an LLM or large language model, it is now possible to develop AI applications
+通过提示LLM或大型语言模型，现在有可能开发人工智能应用程序
+
+3
+00:00:16,260 --> 00:00:19,080
+much faster than ever before.
+比以前快得多。
+
+4
+00:00:19,080 --> 00:00:24,960
+But an application can require prompting an LLM multiple times and parsing its output,
+但一个应用程序可能需要多次提示LLM并解析其输出、
+
+5
+00:00:24,960 --> 00:00:29,080
+and so there's a lot of glue code that needs to be written.
+因此，有很多胶水代码需要编写。
+
+6
+00:00:29,080 --> 00:00:32,600
+LLM for Large Language Model Application Development, created by Harrison Chase, makes this development
+由Harrison Chase创建的用于大型语言模型应用程序开发的LLM 使这一开发过程
+
+7
+00:00:32,600 --> 00:00:34,080
+process much easier.
+变得更加容易。
+
+8
+00:00:34,080 --> 00:00:38,880
+I'm thrilled to have Harrison here, who had built this short course in collaboration with
+我很高兴Harrison来到这里，他曾与其他的人合作建立了这个短期课程。
+
+9
+00:00:38,880 --> 00:00:43,080
+DeepLearning.ai to teach how to use this amazing tool.
+DeepLearning.ai教你如何使用这个神奇的工具。
+
+10
+00:00:43,080 --> 00:00:44,080
+Thanks for having me.
+谢谢你邀请我。
+
+11
+00:00:44,080 --> 00:00:45,960
+I'm really excited to be here.
+我真的很高兴能在这里。
+
+12
+00:00:45,960 --> 00:00:50,020
+LangChain started as an open source framework for building LLM applications.
+LangChain开始是一个用于构建LLM应用程序的开源框架。
+
+13
+00:00:50,020 --> 00:00:54,040
+It came about when I was talking to a bunch of folks in the field who were building more
+它是在我与该领域的一群人交谈时产生的，这些人正在建立更多的
+
+14
+00:00:54,040 --> 00:01:00,280
+complex applications and saw some common abstractions in terms of how they were being developed.
+复杂的应用程序，并在如何开发方面看到了一些共同的抽象概念。
+
+15
+00:01:00,280 --> 00:01:04,880
+And we've been really thrilled at the community adoption of LangChain so far, and so look
+到目前为止，我们对LangChain的社区采用情况感到非常兴奋，所以看起来
+
+16
+00:01:04,880 --> 00:01:08,240
+forward to sharing it with everyone here and look forward to seeing what people build with
+期待着与这里的每一个人分享，并期待着看到人们用它建造的东西。
+
+17
+00:01:08,240 --> 00:01:09,240
+it.
+它。
+
+18
+00:01:09,240 --> 00:01:15,080
+And in fact, as a sign of LangChain's momentum, not only does it have numerous users, but
+而事实上，作为LangChain势头的一个标志，它不仅拥有众多的用户，而且
+
+19
+00:01:15,080 --> 00:01:19,280
+there are also many hundreds of contributors to the open source.
+也有成百上千的开放源码的贡献者。
+
+20
+00:01:19,280 --> 00:01:22,860
+And this has been instrumental for its rapid rate of development.
+这对其快速的发展速度起到了重要作用。
+
+21
+00:01:22,860 --> 00:01:26,920
+This team really ships code and features at an amazing pace.
+这个团队真的以惊人的速度交付代码和功能。
+
+22
+00:01:26,920 --> 00:01:31,360
+So hopefully after this short course, you'll be able to quickly put together some really
+因此，希望在这个简短的课程之后，你将能够迅速地把一些真正的
+
+23
+00:01:31,360 --> 00:01:34,000
+cool applications using LangChain.
+使用LangChain的很酷的应用程序。
+
+24
+00:01:34,000 --> 00:01:40,760
+And who knows, maybe you even decide to contribute back to the open source LangChain effort.
+谁知道呢，也许你甚至决定回馈给开源的LangChain工作。
+
+25
+00:01:40,760 --> 00:01:45,660
+LangChain is an open source development framework for building LLM applications.
+LangChain是一个用于构建LLM应用程序的开源开发框架。
+
+26
+00:01:45,660 --> 00:01:49,920
+We have two different packages, a Python one and a JavaScript one.
+我们有两个不同的包，一个是Python包，一个是JavaScript包。
+
+27
+00:01:49,920 --> 00:01:52,720
+They're focused on composition and modularity.
+他们专注于组成和模块化。
+
+28
+00:01:52,720 --> 00:01:56,600
+So they have a lot of individual components that can be used in conjunction with each
+因此，他们有很多单独的组件，可以相互结合
+
+29
+00:01:56,600 --> 00:01:58,640
+other or by themselves.
+或单独使用。
+
+30
+00:01:58,640 --> 00:02:00,200
+And so that's one of the key value adds.
+因此，这是关键的附加值之一。
+
+31
+00:02:00,200 --> 00:02:03,800
+And then the other key value add is a bunch of different use cases.
+然后其他关键的增值是一堆不同的使用案例。
+
+32
+00:02:03,800 --> 00:02:08,960
+So chains of ways of combining these modular components into more end-to-end applications
+因此，将这些模块化组件组合成更多的端到端应用的方法链
+
+33
+00:02:08,960 --> 00:02:13,160
+and making it very easy to get started with those use cases.
+并使开始使用这些用例变得非常容易。
+
+34
+00:02:13,160 --> 00:02:16,160
+In this class, we'll cover the common components of LangChain.
+在这堂课中，我们将介绍LangChain的常见组件。
+
+35
+00:02:16,160 --> 00:02:17,800
+So we'll talk about models.
+因此，我们要谈一谈模型。
+
+36
+00:02:17,800 --> 00:02:22,440
+We'll talk about prompts, which are how you get models to do useful and interesting things.
+我们将谈论提示，这是你如何让模型做有用和有趣的事情。
+
+37
+00:02:22,440 --> 00:02:27,040
+We'll talk about indexes, which are ways of ingesting data so that you can combine it
+我们将讨论索引，索引是引入数据的方法，以便您可以将其与模型组合在一起。
+
+38
+00:02:27,040 --> 00:02:28,200
+with models.
+我们将讨论索引，索引是引入数据的方法，以便您可以将其与模型组合在一起。
+
+39
+00:02:28,200 --> 00:02:32,480
+And then we'll talk about chains, which are more end-to-end use cases, along with agents,
+然后，我们将讨论链，这是更多的端到端用例，同时还有代理、
+
+40
+00:02:32,480 --> 00:02:36,720
+which are a very exciting type of end-to-end use case, which uses the model as a reasoning
+这是一种非常令人兴奋的端到端用例，它使用模型作为推理引擎。
+
+41
+00:02:36,720 --> 00:02:38,240
+engine.
+这是一种非常令人兴奋的端到端用例，它使用模型作为推理引擎。
+
+42
+00:02:38,240 --> 00:02:43,560
+We're also grateful to Ankush Gola, who is the co-founder of LangChain alongside
+我们也很感谢 Ankush Gola，他和Harrison Chase都是是LangChain的联合创始人。
+
+43
+00:02:43,560 --> 00:02:48,360
+Harrison Chase, for also putting a lot of thought into these materials and helping with
+他也对这些材料投入了大量的心血，
+
+44
+00:02:48,360 --> 00:02:50,940
+the creation of this short course.
+并帮助创建了这个短期课程。
+
+45
+00:02:50,940 --> 00:02:56,240
+And on the deep learning, the AI side, Geoff Ladwig, Eddy Shyu, and Diala Ezzeddine have
+在深度学习方面，人工智能方面，Geoff Ladwig, Eddy Shyu 和 Diala Ezzeddine
+
+46
+00:02:56,240 --> 00:02:59,600
+also contributed to these materials.
+也为这些材料做出了贡献。
+
+47
+00:02:59,600 --> 00:03:03,080
+And so with that, let's go on to the next video where we'll learn about LangChain's
+因此，让我们继续观看下一个视频，我们将了解LangChain的
+
+48
+00:03:03,080 --> 00:03:04,960
+models, prompts, and pauses.
+模型、提示和停顿。
+
